@@ -10,6 +10,7 @@ Usage:
 
 import os
 import anthropic
+import httpx  
 from dotenv import load_dotenv
 
 from agent import run, save_query
@@ -46,7 +47,10 @@ def main() -> None:
     if not api_key:
         raise SystemExit("ANTHROPIC_API_KEY not set. Add it to .env or your environment.")
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = anthropic.Anthropic(
+        api_key=api_key,
+        http_client=httpx.Client(verify=False)
+    )
 
     print("FMCG Data Agent — type 'exit' to quit.")
     while True:

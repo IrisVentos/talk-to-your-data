@@ -1,0 +1,156 @@
+[
+  {
+    "id": "S01",
+    "intent": "total revenue by region",
+    "dataset": "sales",
+    "description": "Sum of Total Revenue ($) grouped by Region, sorted descending.",
+    "pandas_code": "df.groupby('Region')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False)"
+  },
+  {
+    "id": "S02",
+    "intent": "total units sold by category",
+    "dataset": "sales",
+    "description": "Sum of Units Sold grouped by Category.",
+    "pandas_code": "df.groupby('Category')['Units Sold'].sum().reset_index().sort_values('Units Sold', ascending=False)"
+  },
+  {
+    "id": "S03",
+    "intent": "top products by revenue",
+    "dataset": "sales",
+    "description": "Top 10 products ranked by total revenue.",
+    "pandas_code": "df.groupby('Product Name')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False).head(10)"
+  },
+  {
+    "id": "S04",
+    "intent": "revenue by sales rep",
+    "dataset": "sales",
+    "description": "Revenue split by Sales Rep.",
+    "pandas_code": "df.groupby('Sales Rep')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False)"
+  },
+  {
+    "id": "S05",
+    "intent": "average discount by category",
+    "dataset": "sales",
+    "description": "Average discount percentage per category.",
+    "pandas_code": "df.groupby('Category')['Discount (%)'].mean().round(1).reset_index().sort_values('Discount (%)', ascending=False)"
+  },
+  {
+    "id": "S06",
+    "intent": "net revenue by category",
+    "dataset": "sales",
+    "description": "Total net revenue by category.",
+    "pandas_code": "df.groupby('Category')['Net Revenue ($)'].sum().reset_index().sort_values('Net Revenue ($)', ascending=False)"
+  },
+  {
+    "id": "S07",
+    "intent": "monthly revenue trend",
+    "dataset": "sales",
+    "description": "Total revenue aggregated by month.",
+    "pandas_code": "df.assign(Period=pd.to_datetime(df['Month']).dt.to_period('M').astype(str)).groupby('Period')['Total Revenue ($)'].sum().reset_index().sort_values('Period')"
+  },
+  {
+    "id": "S08",
+    "intent": "revenue by year",
+    "dataset": "sales",
+    "description": "Total revenue grouped by year.",
+    "pandas_code": "df.assign(Year=pd.to_datetime(df['Month']).dt.year).groupby('Year')['Total Revenue ($)'].sum().reset_index().sort_values('Year')"
+  },
+  {
+    "id": "H01",
+    "intent": "headcount by department",
+    "dataset": "hr",
+    "description": "Number of employees per department.",
+    "pandas_code": "df.groupby('Department').size().reset_index(name='Headcount').sort_values('Headcount', ascending=False)"
+  },
+  {
+    "id": "H02",
+    "intent": "average salary by department",
+    "dataset": "hr",
+    "description": "Mean Annual Salary ($) per department.",
+    "pandas_code": "df.groupby('Department')['Annual Salary ($)'].mean().round(0).reset_index().sort_values('Annual Salary ($)', ascending=False)"
+  },
+  {
+    "id": "H03",
+    "intent": "employee status breakdown",
+    "dataset": "hr",
+    "description": "Count of employees by Status (Active/Left).",
+    "pandas_code": "df.groupby('Status').size().reset_index(name='Count')"
+  },
+  {
+    "id": "H04",
+    "intent": "headcount by contract type",
+    "dataset": "hr",
+    "description": "Employee count by contract type.",
+    "pandas_code": "df.groupby('Contract Type').size().reset_index(name='Count')"
+  },
+  {
+    "id": "H05",
+    "intent": "average bonus by department",
+    "dataset": "hr",
+    "description": "Mean Annual Bonus ($) per department.",
+    "pandas_code": "df.groupby('Department')['Annual Bonus ($)'].mean().round(0).reset_index().sort_values('Annual Bonus ($)', ascending=False)"
+  },
+  {
+    "id": "H06",
+    "intent": "average tenure by department",
+    "dataset": "hr",
+    "description": "Average years at company per department.",
+    "pandas_code": "df.groupby('Department')['Years at Company'].mean().round(1).reset_index().sort_values('Years at Company', ascending=False)"
+  },
+  {
+    "id": "F01",
+    "intent": "gross margin by quarter",
+    "dataset": "financial",
+    "description": "Gross Margin (%) per quarter.",
+    "pandas_code": "df[['Quarter', 'Gross Margin (%)']].sort_values('Quarter')"
+  },
+  {
+    "id": "F02",
+    "intent": "ebitda by quarter",
+    "dataset": "financial",
+    "description": "EBITDA ($) per quarter.",
+    "pandas_code": "df[['Quarter', 'EBITDA ($)']].sort_values('Quarter')"
+  },
+  {
+    "id": "F03",
+    "intent": "quarterly net profit trend",
+    "dataset": "financial",
+    "description": "Net Profit ($) per quarter.",
+    "pandas_code": "df[['Quarter', 'Net Profit ($)']].sort_values('Quarter')"
+  },
+  {
+    "id": "F04",
+    "intent": "operating expenses by quarter",
+    "dataset": "financial",
+    "description": "Operating Expenses ($) per quarter.",
+    "pandas_code": "df[['Quarter', 'Operating Expenses ($)']].sort_values('Quarter')"
+  },
+  {
+    "id": "F05",
+    "intent": "year over year revenue growth",
+    "dataset": "financial",
+    "description": "YoY Revenue Growth (%) per quarter.",
+    "pandas_code": "df[['Quarter', 'YoY Revenue Growth (%)']].sort_values('Quarter')"
+  },
+  {
+    "intent": "revenue in 2024",
+    "dataset": "financial",
+    "description": "Show revenue data for 2024 quarters.",
+    "pandas_code": "df[df['Quarter'].str.contains('2024', case=False, na=False)][['Quarter', 'Gross Revenue ($)']]",
+    "id": "F06"
+  },
+  {
+    "intent": "gross profit in 2025",
+    "dataset": "financial",
+    "description": "Show gross profit data for 2025 quarters.",
+    "pandas_code": "df[df['Quarter'].str.contains('2025')][['Quarter', 'Gross Profit ($)']]",
+    "id": "F07"
+  },
+  {
+    "intent": "R&D headcount and salary information",
+    "dataset": "hr",
+    "description": "Shows the number of employees in R&D department and their salary details.",
+    "pandas_code": "df[df['Department'] == 'R&D'][['Full Name', 'Job Title', 'Annual Salary ($)', 'Annual Bonus ($)']]",
+    "id": "H07"
+  }
+]

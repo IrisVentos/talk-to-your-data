@@ -21,58 +21,65 @@ import os
 _STORE_PATH = os.path.join(os.path.dirname(__file__), "validated_queries.json")
 
 SEED_QUERIES: list[dict] = [
-    # ── Sales ──────────────────────────────────────────────────────────
+    # ── Sales (columns: Month, Product Name, Category, Region, Units Sold, Unit Price ($), Total Revenue ($), Discount (%), Net Revenue ($), Sales Rep)
     {
         "id": "S01",
         "intent": "total revenue by region",
         "dataset": "sales",
-        "description": "Sum of Revenue_EUR grouped by Region, sorted descending.",
-        "pandas_code": "df.groupby('Region')['Revenue_EUR'].sum().reset_index().sort_values('Revenue_EUR', ascending=False)",
+        "description": "Sum of Total Revenue ($) grouped by Region, sorted descending.",
+        "pandas_code": "df.groupby('Region')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False)",
     },
     {
         "id": "S02",
         "intent": "total units sold by category",
         "dataset": "sales",
-        "description": "Sum of Units_Sold grouped by Category.",
-        "pandas_code": "df.groupby('Category')['Units_Sold'].sum().reset_index().sort_values('Units_Sold', ascending=False)",
+        "description": "Sum of Units Sold grouped by Category.",
+        "pandas_code": "df.groupby('Category')['Units Sold'].sum().reset_index().sort_values('Units Sold', ascending=False)",
     },
     {
         "id": "S03",
         "intent": "top products by revenue",
         "dataset": "sales",
-        "description": "Top 10 products ranked by total Revenue_EUR.",
-        "pandas_code": "df.groupby('Product_Name')['Revenue_EUR'].sum().reset_index().sort_values('Revenue_EUR', ascending=False).head(10)",
+        "description": "Top 10 products ranked by total revenue.",
+        "pandas_code": "df.groupby('Product Name')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False).head(10)",
     },
     {
         "id": "S04",
-        "intent": "revenue by channel",
+        "intent": "revenue by sales rep",
         "dataset": "sales",
-        "description": "Revenue split by sales Channel.",
-        "pandas_code": "df.groupby('Channel')['Revenue_EUR'].sum().reset_index().sort_values('Revenue_EUR', ascending=False)",
+        "description": "Revenue split by Sales Rep.",
+        "pandas_code": "df.groupby('Sales Rep')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False)",
     },
     {
         "id": "S05",
-        "intent": "promotional impact on revenue",
+        "intent": "average discount by category",
         "dataset": "sales",
-        "description": "Average revenue and units for promoted vs non-promoted sales.",
-        "pandas_code": "df.groupby('Promo_Flag')[['Revenue_EUR', 'Units_Sold']].mean().reset_index()",
+        "description": "Average discount percentage per category.",
+        "pandas_code": "df.groupby('Category')['Discount (%)'].mean().round(1).reset_index().sort_values('Discount (%)', ascending=False)",
     },
     {
         "id": "S06",
-        "intent": "gross margin by category",
+        "intent": "net revenue by category",
         "dataset": "sales",
-        "description": "Total gross margin EUR by category.",
-        "pandas_code": "df.groupby('Category')['Gross_Margin_EUR'].sum().reset_index().sort_values('Gross_Margin_EUR', ascending=False)",
+        "description": "Total net revenue by category.",
+        "pandas_code": "df.groupby('Category')['Net Revenue ($)'].sum().reset_index().sort_values('Net Revenue ($)', ascending=False)",
     },
     {
         "id": "S07",
         "intent": "monthly revenue trend",
         "dataset": "sales",
-        "description": "Revenue aggregated by month.",
-        "pandas_code": "df.assign(Month=pd.to_datetime(df['Date']).dt.to_period('M').astype(str)).groupby('Month')['Revenue_EUR'].sum().reset_index().sort_values('Month')",
+        "description": "Total revenue aggregated by month.",
+        "pandas_code": "df.assign(Period=pd.to_datetime(df['Month']).dt.to_period('M').astype(str)).groupby('Period')['Total Revenue ($)'].sum().reset_index().sort_values('Period')",
+    },
+    {
+        "id": "S08",
+        "intent": "revenue by year",
+        "dataset": "sales",
+        "description": "Total revenue grouped by year.",
+        "pandas_code": "df.assign(Year=pd.to_datetime(df['Month']).dt.year).groupby('Year')['Total Revenue ($)'].sum().reset_index().sort_values('Year')",
     },
 
-    # ── HR ─────────────────────────────────────────────────────────────
+    # ── HR (columns: Employee ID, Full Name, Department, Job Title, Contract Type, Start Date, Years at Company, Annual Salary ($), Bonus (%), Annual Bonus ($), Status)
     {
         "id": "H01",
         "intent": "headcount by department",
@@ -84,73 +91,73 @@ SEED_QUERIES: list[dict] = [
         "id": "H02",
         "intent": "average salary by department",
         "dataset": "hr",
-        "description": "Mean Salary_EUR per department.",
-        "pandas_code": "df.groupby('Department')['Salary_EUR'].mean().round(0).reset_index().sort_values('Salary_EUR', ascending=False)",
+        "description": "Mean Annual Salary ($) per department.",
+        "pandas_code": "df.groupby('Department')['Annual Salary ($)'].mean().round(0).reset_index().sort_values('Annual Salary ($)', ascending=False)",
     },
     {
         "id": "H03",
-        "intent": "attrition rate by department",
+        "intent": "employee status breakdown",
         "dataset": "hr",
-        "description": "Attrition rate (%) per department.",
-        "pandas_code": "df.groupby('Department')['Attrition'].mean().mul(100).round(1).reset_index().rename(columns={'Attrition': 'Attrition_Rate_Pct'}).sort_values('Attrition_Rate_Pct', ascending=False)",
+        "description": "Count of employees by Status.",
+        "pandas_code": "df.groupby('Status').size().reset_index(name='Count')",
     },
     {
         "id": "H04",
-        "intent": "gender diversity breakdown",
+        "intent": "headcount by contract type",
         "dataset": "hr",
-        "description": "Employee count by gender.",
-        "pandas_code": "df.groupby('Gender').size().reset_index(name='Count')",
+        "description": "Employee count by contract type.",
+        "pandas_code": "df.groupby('Contract Type').size().reset_index(name='Count')",
     },
     {
         "id": "H05",
-        "intent": "average performance score by department",
+        "intent": "average bonus by department",
         "dataset": "hr",
-        "description": "Mean performance score per department.",
-        "pandas_code": "df.groupby('Department')['Performance_Score'].mean().round(2).reset_index().sort_values('Performance_Score', ascending=False)",
+        "description": "Mean Annual Bonus ($) per department.",
+        "pandas_code": "df.groupby('Department')['Annual Bonus ($)'].mean().round(0).reset_index().sort_values('Annual Bonus ($)', ascending=False)",
     },
     {
         "id": "H06",
-        "intent": "headcount by country",
+        "intent": "average tenure by department",
         "dataset": "hr",
-        "description": "Number of employees per country.",
-        "pandas_code": "df.groupby('Country').size().reset_index(name='Headcount').sort_values('Headcount', ascending=False)",
+        "description": "Average years at company per department.",
+        "pandas_code": "df.groupby('Department')['Years at Company'].mean().round(1).reset_index().sort_values('Years at Company', ascending=False)",
     },
 
-    # ── Financial ──────────────────────────────────────────────────────
+    # ── Financial (columns: Quarter, Gross Revenue ($), COGS ($), Gross Profit ($), Gross Margin (%), Operating Expenses ($), EBITDA ($), EBITDA Margin (%), Net Profit ($), Net Margin (%), YoY Revenue Growth (%))
     {
         "id": "F01",
-        "intent": "gross margin by region",
+        "intent": "gross margin by quarter",
         "dataset": "financial",
-        "description": "Average Gross_Margin_Pct by region.",
-        "pandas_code": "df.groupby('Region')['Gross_Margin_Pct'].mean().round(1).reset_index().sort_values('Gross_Margin_Pct', ascending=False)",
+        "description": "Gross Margin (%) per quarter.",
+        "pandas_code": "df[['Quarter', 'Gross Margin (%)']].sort_values('Quarter')",
     },
     {
         "id": "F02",
-        "intent": "ebitda by category",
+        "intent": "ebitda by quarter",
         "dataset": "financial",
-        "description": "Total EBITDA_EUR by category.",
-        "pandas_code": "df.groupby('Category')['EBITDA_EUR'].sum().reset_index().sort_values('EBITDA_EUR', ascending=False)",
+        "description": "EBITDA ($) per quarter.",
+        "pandas_code": "df[['Quarter', 'EBITDA ($)']].sort_values('Quarter')",
     },
     {
         "id": "F03",
-        "intent": "monthly net revenue trend",
+        "intent": "quarterly net profit trend",
         "dataset": "financial",
-        "description": "Total net revenue per month.",
-        "pandas_code": "df.groupby('Month')['Net_Revenue_EUR'].sum().reset_index().sort_values('Month')",
+        "description": "Net Profit ($) per quarter.",
+        "pandas_code": "df[['Quarter', 'Net Profit ($)']].sort_values('Quarter')",
     },
     {
         "id": "F04",
-        "intent": "marketing spend as percent of revenue by category",
+        "intent": "operating expenses by quarter",
         "dataset": "financial",
-        "description": "Marketing spend efficiency per category.",
-        "pandas_code": "df.groupby('Category').apply(lambda x: (x['Marketing_Spend_EUR'].sum() / x['Net_Revenue_EUR'].sum() * 100).round(1)).reset_index(name='Marketing_Pct_Revenue')",
+        "description": "Operating Expenses ($) per quarter.",
+        "pandas_code": "df[['Quarter', 'Operating Expenses ($)']].sort_values('Quarter')",
     },
     {
         "id": "F05",
-        "intent": "operating costs by region",
+        "intent": "year over year revenue growth",
         "dataset": "financial",
-        "description": "Total operating costs per region.",
-        "pandas_code": "df.groupby('Region')['Operating_Costs_EUR'].sum().reset_index().sort_values('Operating_Costs_EUR', ascending=False)",
+        "description": "YoY Revenue Growth (%) per quarter.",
+        "pandas_code": "df[['Quarter', 'YoY Revenue Growth (%)']].sort_values('Quarter')",
     },
 ]
 
@@ -182,7 +189,7 @@ def get_by_id(query_id: str) -> dict | None:
 def to_prompt_text() -> str:
     """Compact listing for inclusion in Claude prompts."""
     return "\n".join(
-        f"[{q['id']}] {q['intent']} (dataset={q['dataset']})"
+        f"[{q['id']}] {q['intent']} — {q.get('description', '')} (dataset={q['dataset']})"
         for q in get_all()
     )
 
