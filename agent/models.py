@@ -11,7 +11,7 @@ from pydantic import BaseModel
 class QueryMatch(BaseModel):
     """Claude's classification of a user question."""
 
-    type: str  # "out_of_scope" | "matched" | "new_query"
+    type: str  # "out_of_scope" | "matched" | "new_query" | "multi_query"
 
     # set when type == "matched"
     matched_id: Optional[str] = None
@@ -21,6 +21,10 @@ class QueryMatch(BaseModel):
     dataset: Optional[str] = None
     description: Optional[str] = None
     pandas_code: Optional[str] = None
+
+    # set when type == "multi_query" (combines multiple datasets)
+    queries: Optional[list[dict]] = None  # [{"dataset": ..., "pandas_code": ...}]
+    merge_code: Optional[str] = None  # expression using results_0, results_1, etc.
 
 
 class AgentResult(BaseModel):
@@ -37,5 +41,8 @@ class AgentResult(BaseModel):
 
     # populated for new (unvalidated) queries
     proposed_query: Optional[dict] = None
+
+    # populated when user requests a visualization
+    chart_path: Optional[str] = None
 
     answer: str  # human-readable summary

@@ -30,6 +30,9 @@ def _print_result(result) -> None:
     if result.table:
         print(f"  → {len(result.table)} row(s) returned")
 
+    if result.chart_path:
+        print(f"  📊 Chart saved: {result.chart_path}")
+
     if result.proposed_query:
         q = result.proposed_query
         print(f"\n  ⚠  New query proposed: '{q['intent']}' on dataset '{q['dataset']}'")
