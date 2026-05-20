@@ -152,5 +152,19 @@
     "description": "Shows the number of employees in R&D department and their salary details.",
     "pandas_code": "df[df['Department'] == 'R&D'][['Full Name', 'Job Title', 'Annual Salary ($)', 'Annual Bonus ($)']]",
     "id": "H07"
+  },
+  {
+    "intent": "total annual salaries by department",
+    "dataset": "hr",
+    "description": "Sum of all annual salaries grouped by department for bar chart visualization.",
+    "pandas_code": "df.groupby('Department')['Annual Salary ($)'].sum().reset_index().sort_values('Annual Salary ($)', ascending=False)",
+    "id": "H08"
+  },
+  {
+    "intent": "total sales by category 2026",
+    "dataset": "sales",
+    "description": "Total revenue by category for 2026 data for bar chart visualization.",
+    "pandas_code": "df[df['Month'].dt.year == 2026].groupby('Category')['Total Revenue ($)'].sum().reset_index().sort_values('Total Revenue ($)', ascending=False)",
+    "id": "S09"
   }
 ]
